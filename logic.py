@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Set
+from typing import List, Dict, Tuple, Set, Literal, Any
 import random
 
 
@@ -99,4 +99,88 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
     return complete_assignment
 
 
-# TODO - add code from multiple day assignments and util
+def without_keys(d: Dict, keys_to_exclude: List) -> Dict:
+    return {k: v for k, v in d.items() if k not in keys_to_exclude}
+
+
+DayInfoKey = Literal['time', 'uaworkers', 'uarides']
+DayInfo = Dict[DayInfoKey, Any]
+Day = str
+Ride = str
+Worker = str
+
+
+def generate_multiple_day_assignments(
+        days_info: Dict[Day, DayInfo], 
+        all_rides_time: Dict[Ride, int], 
+        all_workers_can_check: Dict[Worker, Set[Ride]]    
+    ) -> Tuple[Dict[Day, Dict[Ride, Worker]] | None, str]:
+    """
+    First elem of tuple return value:
+        Dict of {day: {ride: worker...}, ...} if an assignment can be found for all days,
+        otherwise None.
+    Second elem of tuple:
+        Status string. If successful says for which days generated, which days closed.
+        Otherwise, says which for which days it could not find an assignment. 
+    """
+    multiple_day_assignments = {}
+    string_success = "Generated worker schedule for "
+    string_failure = "Could not find a worker schedule for "
+    status_string = string_success
+    success = True # Does this function return a schedule or None?
+
+    for day, day_info in days_info.items():
+        worker_time = day_info['time']
+
+        if worker_time == 0: # Closed on that day
+            multiple_day_assignments[day] = {}
+            continue
+
+        # Not closed on that day
+        day_ride_times = without_keys(all_rides_time, day_info['uarides'])
+        day_can_check = without_keys(all_workers_can_check, day_info['uaworkers'])
+        day_assignment = generate_day_assignment(worker_time, day_ride_times, day_can_check)
+
+        if day_assignment == None: # Cannot find assignment for that day
+            if success:
+                multiple_day_assignments = None
+                success = False
+                status_string = string_failure
+            status_string += day + ", "
+        
+        # Found assignment for that day
+        if success:
+            multiple_day_assignments[day] = day_assignment
+            status_string += day + ", "
+    
+    # Remove last trailing comma and space
+    status_string = status_string[:-2]
+    
+    return multiple_day_assignments, status_string
+
+
+if __name__ == '__main__':
+    week_info: Dict[Day, DayInfo] = {
+        'mon': {
+            'time': 20,
+            'uaworkers': [],
+            'uarides': []
+        },
+        'wed': {
+            'time': 20,
+            'uaworkers': [],
+            'uarides': []
+        }
+    }
+    all_ride_times = {
+        'wooden': 10,
+        'scary': 1,
+        'slow': 1,
+        'fast': 5
+    }
+    all_can_check = {
+        'john': {'wooden', 'fast'},
+        'bob': {'scary', 'slow'},
+    }
+    assignments, status = generate_multiple_day_assignments(week_info, all_ride_times, all_can_check)
+    print(assignments, status)
