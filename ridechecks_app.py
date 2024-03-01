@@ -47,6 +47,10 @@ def default_line_edit_validator(line_edits: Dict[str, str]) -> bool:
     return True
 
 
+def format_case(s: str) -> str:
+    return s.lower().capitalize()
+ 
+
 class LineEditSubmitWidget(QWidget):
     submit = Signal(dict)
 
@@ -74,7 +78,8 @@ class LineEditSubmitWidget(QWidget):
             line_edit_widgets = self._get_line_edit_widgets()
             line_edit_dict = get_line_edit_dict(line_edit_widgets)
             if line_edits_validated(line_edit_dict):
-                self.submit.emit(line_edit_dict)
+                line_edit_dict_formatted = {k: format_case(v) for k, v in line_edit_dict.items()}
+                self.submit.emit(line_edit_dict_formatted)
                 for widget in line_edit_widgets:
                     widget.clear()
         
@@ -352,6 +357,7 @@ class DayWidget(QWidget):
         unavailable_rides = self.unavailable_rides_display.read_lines()
         return self.day, {'Time': time, 'Unavailable Workers': unavailable_workers, 'Unavailable Rides': unavailable_rides}
 
+
 # TODO Select start date (calendar widget), show sequence of days maybe Wed 1st, Thur 2nd etc.
 class WeeklyInfoWidget(QWidget):
     def __init__(self, weekly_info: Dict[str, Dict], workers: List[str], rides: List[str]):
@@ -394,6 +400,10 @@ class CheckboxGridWidget(QWidget):
         super().__init__()
 
         self.tableWidget = QTableWidget(self)
+
+        # Adding the table widget to a layout allows it to grow.
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.tableWidget)
 
         row_count = len(rows)
         column_count = len(columns)
@@ -461,7 +471,7 @@ class CheckboxGridWidget(QWidget):
             column_names.append(item.text())
         return column_names
 
-# TODO: Make it scale
+
 class WorkerPermissionGrid(CheckboxGridWidget):
     def __init__(self, worker_permissions: Dict[str, List[str]], rides: List[str]):
         workers = sorted(list(worker_permissions.keys()))
@@ -582,7 +592,7 @@ class RidesWidget(QWidget):
             'Add ride', 
             ['Ride name', 'Ride check duration'],
             lambda line_edits: 
-                bool(re.match('^[a-zA-z]\w+$', line_edits['Ride name'])) and 
+                bool(re.match('^[a-zA-z][\w\s]+$', line_edits['Ride name'])) and 
                 bool(re.match('^[1-9]\d*$', line_edits['Ride check duration'])) and
                 line_edits['Ride name'] not in self.read_ride_times()
         )
