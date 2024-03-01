@@ -632,13 +632,16 @@ class GenerateWidget(QWidget):
     def __init__(self):
         super().__init__()
         generate_button = QPushButton('Generate ridecheck')
+        self.status_displayer = DisplayValueWidget('Status:', 'N/A')
         layout = QVBoxLayout(self)
         layout.addWidget(generate_button)
+        layout.addWidget(self.status_displayer)
+        layout.addStretch()
         generate_button.clicked.connect(lambda: self.generate_signal.emit())
         generate_button.setMaximumWidth(300)
     
-    def set_status(self):
-        ...
+    def set_status(self, status: str):
+        self.status_displayer.write_value(status)
 
 
 class MainWindow(QWidget):
@@ -690,16 +693,17 @@ class MainWindow(QWidget):
             ride_times = rides_widget.read_ride_times()
             return {'Weekly Info': weekly_info, 'Worker Permissions': worker_permissions, 'Ride Times': ride_times}
 
-        def generate_ridechecks():
+        def handle_generate_signal():
             yaml_data = read_state()
             ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
-            print(status)
+            generate_widget.set_status(status)
             if ridechecks:
                 make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
                 webbrowser.open('output.html')
 
-        generate_widget.generate_signal.connect(generate_ridechecks)
+        generate_widget.generate_signal.connect(handle_generate_signal)
 
+        # NOTE: Do we need save button? Is saving on close the expected behaviour? I think so...
         def save_state():
             yaml_data = read_state()
             with open('state.yaml', 'w') as f:
