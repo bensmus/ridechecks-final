@@ -461,7 +461,7 @@ class CheckboxGridWidget(QWidget):
             column_names.append(item.text())
         return column_names
 
-
+# TODO: Make it scale
 class WorkerPermissionGrid(CheckboxGridWidget):
     def __init__(self, worker_permissions: Dict[str, List[str]], rides: List[str]):
         workers = sorted(list(worker_permissions.keys()))
