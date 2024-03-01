@@ -1,8 +1,8 @@
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Callable
 import yaml
 import re
 from  bisect import bisect_left
-from PySide6.QtCore import Signal, QSize
+from PySide6.QtCore import Signal, QSize, Qt
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import (
     QWidget,
@@ -35,16 +35,26 @@ def get_line_edit_dict(line_edit_widgets: List[QLineEdit]) -> Dict[str, str] | N
     for widget in line_edit_widgets:
         placeholder_text = widget.placeholderText()
         text = widget.text()
-        if text == '':
-            return # User didn't finish entering text.
         line_edit_dict[placeholder_text] = text
     return line_edit_dict
+
+
+def default_line_edit_validator(line_edits: Dict[str, str]) -> bool:
+    """Make sure no line edit is empty"""
+    for value in line_edits.values():
+        if value == '':
+            return False
+    return True
 
 
 class LineEditSubmitWidget(QWidget):
     submit = Signal(dict)
 
-    def __init__(self, button_text: str, placeholder_texts: List[str]):
+    def __init__(
+            self, 
+            button_text: str, 
+            placeholder_texts: List[str], 
+            line_edits_validated: Callable[[Dict[str, str]], bool] = default_line_edit_validator):
         super().__init__()  
 
         self.horiz_layout = QHBoxLayout(self)
@@ -62,13 +72,14 @@ class LineEditSubmitWidget(QWidget):
 
         def handle_button_clicked():
             line_edit_widgets = self._get_line_edit_widgets()
-            if line_edit_dict := get_line_edit_dict(line_edit_widgets):
+            line_edit_dict = get_line_edit_dict(line_edit_widgets)
+            if line_edits_validated(line_edit_dict):
                 self.submit.emit(line_edit_dict)
                 for widget in line_edit_widgets:
                     widget.clear()
         
         button.clicked.connect(handle_button_clicked)
-    
+
     def _get_line_edit_widgets(self) -> List[QLineEdit]:
         line_edits: List[QLineEdit] = []
         for widget in [self.horiz_layout.itemAt(i).widget() for i in range(self.horiz_layout.count())]:
@@ -85,6 +96,7 @@ class DropdownSubmitWidget(QWidget):
         
         self.dropdown = QComboBox()
         self.dropdown.setMaximumWidth(300)
+        self.dropdown.setMinimumWidth(100)
         for option in dropdown_options:
             self.add_option(option)
         
@@ -235,7 +247,14 @@ class DayWidget(QWidget):
         #### TIME ####
 
         self.time_display = DisplayValueWidget('Time till opening:', str(day_info['Time']))
-        time_set = LineEditSubmitWidget('Set check duration', ['Check duration'])
+        
+        # Initialize widget with validation function: accept non-negative integers.
+        time_set = LineEditSubmitWidget(
+            'Set check duration', 
+            ['Check duration'], 
+            lambda line_edits: bool(re.match('^\d+$', line_edits['Check duration']))
+        )
+
         time_frame = QFrame()
         time_frame.setFrameStyle(QFrame.Box)
         time_layout = QVBoxLayout(time_frame)
@@ -504,7 +523,15 @@ class WorkerPermissionsWidget(QWidget):
         workers = list(worker_permissions.keys())
         self.worker_permissions_grid = WorkerPermissionGrid(worker_permissions, rides)
         
-        worker_add = LineEditSubmitWidget('Add worker', ['Worker name'])
+        # Initialize widget with validation function: worker name is a non-duplicate name.
+        worker_add = LineEditSubmitWidget(
+            'Add worker', 
+            ['Worker name'],
+            lambda line_edits: 
+                bool(re.match('^[a-zA-z]\w+$', line_edits['Worker name'])) and
+                line_edits['Worker name'] not in self.read_permissions()
+        )
+
         worker_delete = DropdownSubmitWidget('Delete worker', workers)
 
         layout.addWidget(self.worker_permissions_grid)
@@ -548,7 +575,18 @@ class RidesWidget(QWidget):
         
         rides = list(ride_times.keys())
         self.rides_display = RideTimesWidget(ride_times)
-        ride_add = LineEditSubmitWidget('Add ride', ['Ride name', 'Ride check duration'])
+
+        # Initialize widget with validation function: ride name is a non-duplicate name, 
+        # ride check duration is positive integer.
+        ride_add = LineEditSubmitWidget(
+            'Add ride', 
+            ['Ride name', 'Ride check duration'],
+            lambda line_edits: 
+                bool(re.match('^[a-zA-z]\w+$', line_edits['Ride name'])) and 
+                bool(re.match('^[1-9]\d*$', line_edits['Ride check duration'])) and
+                line_edits['Ride name'] not in self.read_ride_times()
+        )
+
         ride_delete = DropdownSubmitWidget('Delete ride', rides)
 
         layout.addWidget(self.rides_display)
