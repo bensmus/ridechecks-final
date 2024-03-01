@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple, Callable
 import yaml
 import re
+import webbrowser
 from  bisect import bisect_left
 from PySide6.QtCore import Signal, QSize, Qt
 from PySide6.QtGui import Qt
@@ -23,6 +24,7 @@ from PySide6.QtWidgets import (
     QFrame,
 )
 from logic import generate_multiple_day_assignments
+from make_html_table import make_html_table
 
 app = QApplication([])
 
@@ -691,7 +693,10 @@ class MainWindow(QWidget):
         def generate_ridechecks():
             yaml_data = read_state()
             ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
-            print(ridechecks, status)
+            print(status)
+            if ridechecks:
+                make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
+                webbrowser.open('output.html')
 
         generate_widget.generate_signal.connect(generate_ridechecks)
 

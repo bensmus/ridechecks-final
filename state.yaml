@@ -7,8 +7,7 @@ Weekly Info:
     - Scary
   Tue:
     time: 40
-    workers_ua:
-    - Jones
+    workers_ua: []
     rides_ua:
     - Bee
   Wed:
@@ -16,20 +15,17 @@ Weekly Info:
     workers_ua: []
     rides_ua: []
   Thu:
-    time: 12
-    workers_ua:
-    - Jones
-    - Roly
+    time: 40
+    workers_ua: []
     rides_ua:
     - Wooden
   Fri:
-    time: 5
+    time: 40
     workers_ua: []
     rides_ua: []
   Sat:
-    time: 12
-    workers_ua:
-    - Jones
+    time: 40
+    workers_ua: []
     rides_ua: []
   Sun:
     time: 99
@@ -42,6 +38,7 @@ Worker Permissions:
   - Metal
   Jones:
   - Metal
+  - Wooden
   Michael:
   - Scary
   - Wooden

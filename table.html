@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ridechecks</title>
+    <style>
+        /* Apply a basic style to the table */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        /* Style for table headers (th) */
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        /* Add background color to header cells */
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        /* Style alternating rows */
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        /* Hover effect for rows */
+        tr:hover {
+            background-color: rgb(143, 158, 218);
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                {% for day in multiple_day_assignments %}
+                    <th>{{ day }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for ride in rides %}
+                <tr>
+                    <td>{{ ride }}</td>
+                {% for day in multiple_day_assignments %}
+                    <td>{{ multiple_day_assignments[day][ride] }}</td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {{ multiple_day_assignments }}
+</body>
+</html>
