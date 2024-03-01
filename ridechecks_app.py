@@ -352,7 +352,7 @@ class DayWidget(QWidget):
         unavailable_rides = self.unavailable_rides_display.read_lines()
         return self.day, {'Time': time, 'Unavailable Workers': unavailable_workers, 'Unavailable Rides': unavailable_rides}
 
-# TODO Names on top change... mostly generating on Wednesday... also show dates.
+# TODO Select start date (calendar widget), show sequence of days maybe Wed 1st, Thur 2nd etc.
 class WeeklyInfoWidget(QWidget):
     def __init__(self, weekly_info: Dict[str, Dict], workers: List[str], rides: List[str]):
         super().__init__()
