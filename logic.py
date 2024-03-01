@@ -137,8 +137,8 @@ def generate_multiple_day_assignments(
             continue
 
         # Not closed on that day
-        day_ride_times = without_keys(all_rides_time, day_info['uarides'])
-        day_can_check = without_keys(all_workers_can_check, day_info['uaworkers'])
+        day_ride_times = without_keys(all_rides_time, day_info['rides_ua'])
+        day_can_check = without_keys(all_workers_can_check, day_info['workers_ua'])
         day_assignment = generate_day_assignment(worker_time, day_ride_times, day_can_check)
 
         if day_assignment == None: # Cannot find assignment for that day
@@ -163,13 +163,13 @@ if __name__ == '__main__':
     week_info: Dict[Day, DayInfo] = {
         'mon': {
             'time': 20,
-            'uaworkers': [],
-            'uarides': []
+            'workers_ua': [],
+            'rides_ua': []
         },
         'wed': {
             'time': 20,
-            'uaworkers': [],
-            'uarides': []
+            'workers_ua': [],
+            'rides_ua': []
         }
     }
     all_ride_times = {

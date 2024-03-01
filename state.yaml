@@ -1,43 +1,40 @@
 Weekly Info:
   Mon:
-    Time: 123
-    Unavailable Workers:
-    - Alex
-    - Jones
-    - Roly
-    Unavailable Rides:
+    time: 123
+    workers_ua: []
+    rides_ua:
     - Metal
     - Scary
   Tue:
-    Time: 4
-    Unavailable Workers:
+    time: 40
+    workers_ua:
     - Jones
-    Unavailable Rides:
+    rides_ua:
     - Bee
   Wed:
-    Time: 10
-    Unavailable Workers: []
-    Unavailable Rides: []
+    time: 40
+    workers_ua: []
+    rides_ua: []
   Thu:
-    Time: 12
-    Unavailable Workers:
+    time: 12
+    workers_ua:
     - Jones
     - Roly
-    Unavailable Rides:
+    rides_ua:
     - Wooden
   Fri:
-    Time: 5
-    Unavailable Workers: []
-    Unavailable Rides: []
+    time: 5
+    workers_ua: []
+    rides_ua: []
   Sat:
-    Time: 12
-    Unavailable Workers:
+    time: 12
+    workers_ua:
     - Jones
-    Unavailable Rides: []
+    rides_ua: []
   Sun:
-    Time: 99
-    Unavailable Workers: []
-    Unavailable Rides:
+    time: 99
+    workers_ua: []
+    rides_ua:
     - Bee
 Worker Permissions:
   Alex:
@@ -46,6 +43,7 @@ Worker Permissions:
   Jones:
   - Metal
   Michael:
+  - Scary
   - Wooden
   Roly:
   - Metal

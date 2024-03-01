@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QFrame,
 )
+from logic import generate_multiple_day_assignments
 
 app = QApplication([])
 
@@ -238,7 +239,7 @@ class DayWidget(QWidget):
 
     def __init__(self, day: str, day_info: Dict, workers: List[str], rides: List[str]):
         """
-        day_info has the keys: 'Time', 'Unavailable Workers', 'Unavailable Rides'
+        day_info has the keys: 'time', 'workers_ua', 'rides_ua'
         """
         super().__init__()
 
@@ -251,7 +252,7 @@ class DayWidget(QWidget):
 
         #### TIME ####
 
-        self.time_display = DisplayValueWidget('Time till opening:', str(day_info['Time']))
+        self.time_display = DisplayValueWidget('Time till opening:', str(day_info['time']))
         
         # Initialize widget with validation function: accept non-negative integers.
         time_set = LineEditSubmitWidget(
@@ -274,7 +275,7 @@ class DayWidget(QWidget):
         
         #### ABSENT WORKERS  ####
 
-        unavailable_workers = day_info['Unavailable Workers']
+        unavailable_workers = day_info['workers_ua']
         workers_can_set_absent = list(set(workers) - set(unavailable_workers))
         self.unavailable_workers_display = ScrollableLinesWidget(unavailable_workers)
         self.unavailable_workers_add = DropdownSubmitWidget('Set worker absent', workers_can_set_absent)
@@ -302,7 +303,7 @@ class DayWidget(QWidget):
 
         #### CLOSED RIDES #### 
 
-        unavailable_rides = day_info['Unavailable Rides']
+        unavailable_rides = day_info['rides_ua']
         rides_can_set_closed = list(set(rides) - set(unavailable_rides))
         self.unavailable_rides_display = ScrollableLinesWidget(unavailable_rides)
         self.unavailable_rides_add = DropdownSubmitWidget('Set ride closed', rides_can_set_closed) 
@@ -355,7 +356,7 @@ class DayWidget(QWidget):
         time = int(self.time_display.read_value())
         unavailable_workers = self.unavailable_workers_display.read_lines()
         unavailable_rides = self.unavailable_rides_display.read_lines()
-        return self.day, {'Time': time, 'Unavailable Workers': unavailable_workers, 'Unavailable Rides': unavailable_rides}
+        return self.day, {'time': time, 'workers_ua': unavailable_workers, 'rides_ua': unavailable_rides}
 
 
 # TODO Select start date (calendar widget), show sequence of days maybe Wed 1st, Thur 2nd etc.
@@ -623,6 +624,21 @@ class RidesWidget(QWidget):
         return self.rides_display.read_ride_times()
 
 
+class GenerateWidget(QWidget):
+    generate_signal = Signal()
+
+    def __init__(self):
+        super().__init__()
+        generate_button = QPushButton('Generate ridecheck')
+        layout = QVBoxLayout(self)
+        layout.addWidget(generate_button)
+        generate_button.clicked.connect(lambda: self.generate_signal.emit())
+        generate_button.setMaximumWidth(300)
+    
+    def set_status(self):
+        ...
+
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -644,6 +660,7 @@ class MainWindow(QWidget):
         weekly_info_widget = WeeklyInfoWidget(yaml_data['Weekly Info'], workers, rides)
         worker_permissions_widget = WorkerPermissionsWidget(worker_permissions, ride_times)
         rides_widget = RidesWidget(ride_times)
+        generate_widget = GenerateWidget()
 
         rides_widget.ride_add_signal.connect(worker_permissions_widget.add_ride)
         rides_widget.ride_delete_signal.connect(worker_permissions_widget.delete_ride)
@@ -656,6 +673,7 @@ class MainWindow(QWidget):
         tab_widget.addTab(weekly_info_widget, 'Weekly Info')
         tab_widget.addTab(worker_permissions_widget, 'Worker Permissions')
         tab_widget.addTab(rides_widget, 'Rides')
+        tab_widget.addTab(generate_widget, 'Generate')
 
         save_button = QPushButton(self)
         save_button.setText('Save')
@@ -664,11 +682,21 @@ class MainWindow(QWidget):
         layout.addWidget(tab_widget)
         layout.addWidget(save_button)
 
-        def save_state():
+        def read_state():
             weekly_info = weekly_info_widget.read_weekly_info()
             worker_permissions = worker_permissions_widget.read_permissions()
             ride_times = rides_widget.read_ride_times()
-            yaml_data = {'Weekly Info': weekly_info, 'Worker Permissions': worker_permissions, 'Ride Times': ride_times}
+            return {'Weekly Info': weekly_info, 'Worker Permissions': worker_permissions, 'Ride Times': ride_times}
+
+        def generate_ridechecks():
+            yaml_data = read_state()
+            ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
+            print(ridechecks, status)
+
+        generate_widget.generate_signal.connect(generate_ridechecks)
+
+        def save_state():
+            yaml_data = read_state()
             with open('state.yaml', 'w') as f:
                 yaml.safe_dump(yaml_data, f, sort_keys=False)
         
