@@ -1,4 +1,5 @@
 from typing import List, Dict, Tuple, Set, Literal, Any
+import time
 import random
 
 
@@ -9,6 +10,9 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
     """
 
     # SECTION - DFS
+
+    # FIXME - Takes a long time if a complete assignment is impossible.
+
     def dfs(partial_assignment: Dict[str, str], partial_worker_times_remaining: Dict[str, int]) -> Tuple[Dict[str, str], Dict[str, int]]:
         """
         Recursive function.
@@ -34,14 +38,19 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
                     return complete_assignment, complete_worker_times_remaining
         # Could not find a complete assignment based on the partial_assignment and worker_times_remaining.
         return {}, partial_worker_times_remaining
-    # END SECTION - DFS
+
+    start_dfs_time = time.time()
 
     complete_assignment, complete_worker_times_remaining = dfs({}, {worker: worker_time for worker in workers_can_check})
     if complete_assignment == {}:
         print(f"No assignment exists for worker_time={worker_time}, ride_times={rides_time}, can_check={workers_can_check}")
         return None
+    
+    end_dfs_time = time.time()
+    print('dfs time', end_dfs_time - start_dfs_time)
 
     # SECTION - HILLCLIMB
+
     def hillclimb(complete_assignment: Dict[str, str], complete_worker_times_remaining: Dict[str, int]) -> bool:
         """
         Modifies `complete_assignment` in place. 
@@ -91,10 +100,14 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
                 complete_worker_times_remaining[accepting_worker] -= rides_time[ride_transferred]
                 return True
         return False
-    # END SECTION - HILLCLIMB
+    
+    start_hillclimb_time = time.time()
 
     while hillclimb(complete_assignment, complete_worker_times_remaining): # Hillclimb until local optimum.
         pass
+    
+    end_hillclimb_time = time.time()
+    print('hillclimb time', end_hillclimb_time - start_hillclimb_time)
 
     return complete_assignment
 
@@ -128,6 +141,8 @@ def generate_multiple_day_assignments(
     string_failure = "Could not find a worker schedule for "
     status_string = string_success
     success = True # Does this function return a schedule or None?
+
+    print("---")
 
     for day, day_info in days_info.items():
         worker_time = day_info['time']
