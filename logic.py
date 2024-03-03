@@ -20,9 +20,15 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
         worker_times: How much time does every worker have remaining.
         Randomized dfs: find a random solution to CSP that is not even locally optimal.
         """
+
+        # NOTE - This function could be faster if workers were chosen with priority of most time remaining.
+        # Randomize the next ride instead. 
+        # Add a line to check if a complete assignment is possible: set of values of workers_can_check cardinality equal to rides_time length.
+
         # Base case: 
         if len(partial_assignment) == len(rides_time):
             return partial_assignment, partial_worker_times_remaining
+        
         # Recursive case:
         ride = next(ride for ride in rides_time if ride not in partial_assignment)
         workers = list(workers_can_check.keys())
@@ -34,7 +40,7 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
                     partial_assignment | {ride: worker}, 
                     partial_worker_times_remaining | {worker: partial_worker_times_remaining[worker] - rides_time[ride]}
                 )
-                if complete_assignment:
+                if complete_assignment != {}:
                     return complete_assignment, complete_worker_times_remaining
         # Could not find a complete assignment based on the partial_assignment and worker_times_remaining.
         return {}, partial_worker_times_remaining

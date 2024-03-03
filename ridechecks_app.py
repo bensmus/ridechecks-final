@@ -643,6 +643,10 @@ class GenerateWidget(QWidget):
     
     def set_status(self, status: str):
         self.status_displayer.write_value(status)
+    
+    def set_button(self, enabled: bool):
+        """Disable or enable the generate_button"""
+        ...
 
 
 class MainWindow(QWidget):
@@ -701,7 +705,10 @@ class MainWindow(QWidget):
     def handle_generate_signal(self):
         yaml_data = self.read_yaml_data()
         self.yaml_dump(yaml_data) # Save before generating.
+        
+        # FIXME QThread: keep the app responsive. Disable generate button and set status to generating.
         ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
+        
         self.generate_widget.set_status(status)
         if ridechecks:
             make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
