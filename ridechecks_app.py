@@ -662,57 +662,51 @@ class MainWindow(QWidget):
         rides = list(ride_times.keys())
         workers = list(worker_permissions.keys())
 
-        weekly_info_widget = WeeklyInfoWidget(yaml_data['Weekly Info'], workers, rides)
-        worker_permissions_widget = WorkerPermissionsWidget(worker_permissions, ride_times)
-        rides_widget = RidesWidget(ride_times)
-        generate_widget = GenerateWidget()
+        # Initializing all of the widgets from yaml_data:
 
-        rides_widget.ride_add_signal.connect(worker_permissions_widget.add_ride)
-        rides_widget.ride_delete_signal.connect(worker_permissions_widget.delete_ride)
+        self.weekly_info_widget = WeeklyInfoWidget(yaml_data['Weekly Info'], workers, rides)
+        self.worker_permissions_widget = WorkerPermissionsWidget(worker_permissions, ride_times)
+        self.rides_widget = RidesWidget(ride_times)
+        self.generate_widget = GenerateWidget()
 
-        rides_widget.ride_add_signal.connect(weekly_info_widget.add_ride)
-        worker_permissions_widget.add_worker_signal.connect(weekly_info_widget.add_worker)
-        rides_widget.ride_delete_signal.connect(weekly_info_widget.delete_ride)
-        worker_permissions_widget.delete_worker_signal.connect(weekly_info_widget.delete_worker)
+        self.rides_widget.ride_add_signal.connect(self.worker_permissions_widget.add_ride)
+        self.rides_widget.ride_delete_signal.connect(self.worker_permissions_widget.delete_ride)
 
-        tab_widget.addTab(weekly_info_widget, 'Weekly Info')
-        tab_widget.addTab(worker_permissions_widget, 'Worker Permissions')
-        tab_widget.addTab(rides_widget, 'Rides')
-        tab_widget.addTab(generate_widget, 'Generate')
+        self.rides_widget.ride_add_signal.connect(self.weekly_info_widget.add_ride)
+        self.worker_permissions_widget.add_worker_signal.connect(self.weekly_info_widget.add_worker)
+        self.rides_widget.ride_delete_signal.connect(self.weekly_info_widget.delete_ride)
+        self.worker_permissions_widget.delete_worker_signal.connect(self.weekly_info_widget.delete_worker)
 
-        save_button = QPushButton(self)
-        save_button.setText('Save')
+        tab_widget.addTab(self.weekly_info_widget, 'Weekly Info')
+        tab_widget.addTab(self.worker_permissions_widget, 'Worker Permissions')
+        tab_widget.addTab(self.rides_widget, 'Rides')
+        tab_widget.addTab(self.generate_widget, 'Generate')
 
         layout = QVBoxLayout(self)
         layout.addWidget(tab_widget)
-        layout.addWidget(save_button)
 
-        def read_state():
-            weekly_info = weekly_info_widget.read_weekly_info()
-            worker_permissions = worker_permissions_widget.read_permissions()
-            ride_times = rides_widget.read_ride_times()
-            return {'Weekly Info': weekly_info, 'Worker Permissions': worker_permissions, 'Ride Times': ride_times}
+        self.generate_widget.generate_signal.connect(self.handle_generate_signal)
 
-        def handle_generate_signal():
-            yaml_data = read_state()
-            ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
-            generate_widget.set_status(status)
-            if ridechecks:
-                make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
-                webbrowser.open('output.html')
+    def read_yaml_data(self):
+        weekly_info = self.weekly_info_widget.read_weekly_info()
+        worker_permissions = self.worker_permissions_widget.read_permissions()
+        ride_times = self.rides_widget.read_ride_times()
+        return {'Weekly Info': weekly_info, 'Worker Permissions': worker_permissions, 'Ride Times': ride_times}
 
-        generate_widget.generate_signal.connect(handle_generate_signal)
-
-        # NOTE: Do we need save button? Is saving on close the expected behaviour? I think so...
-        def save_state():
-            yaml_data = read_state()
-            with open('state.yaml', 'w') as f:
-                yaml.safe_dump(yaml_data, f, sort_keys=False)
-        
-        save_button.clicked.connect(save_state)
-        save_button.setMaximumWidth(300)
-        save_button.setStyleSheet("background-color: lightblue;")
-
+    def handle_generate_signal(self):
+        yaml_data = self.read_yaml_data()
+        ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
+        self.generate_widget.set_status(status)
+        if ridechecks:
+            make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
+            webbrowser.open('output.html')
+    
+    def closeEvent(self, event):
+        yaml_data = self.read_yaml_data()
+        with open('state.yaml', 'w') as f:
+            yaml.safe_dump(yaml_data, f, sort_keys=False)
+        event.accept()
+    
 
 window = MainWindow()
 window.show()
