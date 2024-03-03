@@ -398,6 +398,7 @@ class WeeklyInfoWidget(QWidget):
         return weekly_info
 
 
+# TODO: Any cell click should trigger checkbox, center checkbox.
 class CheckboxGridWidget(QWidget):
     def __init__(self, rows: List[str], columns: List[str]):
         super().__init__()
@@ -693,8 +694,13 @@ class MainWindow(QWidget):
         ride_times = self.rides_widget.read_ride_times()
         return {'Weekly Info': weekly_info, 'Worker Permissions': worker_permissions, 'Ride Times': ride_times}
 
+    def yaml_dump(self, yaml_data):
+        with open('state.yaml', 'w') as f:
+            yaml.safe_dump(yaml_data, f, sort_keys=False)
+
     def handle_generate_signal(self):
         yaml_data = self.read_yaml_data()
+        self.yaml_dump(yaml_data) # Save before generating.
         ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
         self.generate_widget.set_status(status)
         if ridechecks:
@@ -703,8 +709,7 @@ class MainWindow(QWidget):
     
     def closeEvent(self, event):
         yaml_data = self.read_yaml_data()
-        with open('state.yaml', 'w') as f:
-            yaml.safe_dump(yaml_data, f, sort_keys=False)
+        self.yaml_dump(yaml_data)
         event.accept()
     
 
