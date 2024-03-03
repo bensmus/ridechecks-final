@@ -21,7 +21,7 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
         Randomized dfs: find a random solution to CSP that is not even locally optimal.
         """
 
-        # NOTE - This function could be faster if workers were chosen with priority of most time remaining.
+        # NOTE - This function could be faster if workers were chosen from a list sorted based on time remaining. (Kind of A star-y?)
         # Randomize the next ride instead. 
         # Add a line to check if a complete assignment is possible: set of values of workers_can_check cardinality equal to rides_time length.
 
