@@ -627,6 +627,8 @@ class RidesWidget(QWidget):
         return self.rides_display.read_ride_times()
 
 
+# TODO - Need to be able to update a schedule that was previously generated. Circumstances can 
+# change, someone can call in sick for that day. So "update day" feature.
 class GenerateWidget(QWidget):
     generate_signal = Signal()
 
@@ -707,6 +709,7 @@ class MainWindow(QWidget):
         self.yaml_dump(yaml_data) # Save before generating.
         
         # FIXME QThread: keep the app responsive. Disable generate button and set status to generating.
+        # Also allow for cancelling the QThread after timeout and retrying.
         ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
         
         self.generate_widget.set_status(status)
