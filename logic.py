@@ -17,7 +17,7 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
         """
         Recursive function.
         partial_assignment: Dictionary of {ride: worker...} containing a subset of rides.
-        worker_times: How much time does every worker have remaining.
+        partial_worker_times_remaining: How much time does every worker have remaining (always contains all workers).
         Randomized dfs: find a random solution to CSP that is not even locally optimal.
         """
 
@@ -32,8 +32,8 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
         # Recursive case:
         ride = next(ride for ride in rides_time if ride not in partial_assignment)
         workers = list(workers_can_check.keys())
-        random.shuffle(workers)
-        for worker in workers: # Try to assign every worker to the ride in a random order.
+        # random.shuffle(workers) # NOTE - May not be necessary! Hillclimb is already random. By removing this, DFS is more efficient.
+        for worker in workers: # Try to assign every worker to the ride.
             if ride in workers_can_check[worker] and rides_time[ride] <= partial_worker_times_remaining[worker]:
                 # Recursive call, adding ride and worker to partial_assignment, worker_times reflect remaining time.
                 complete_assignment, complete_worker_times_remaining = dfs(
@@ -54,6 +54,7 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
     
     end_dfs_time = time.time()
     print('dfs time', end_dfs_time - start_dfs_time)
+    print(complete_assignment)
 
     # SECTION - HILLCLIMB
 
