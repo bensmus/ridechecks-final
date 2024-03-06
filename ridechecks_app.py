@@ -3,7 +3,7 @@ import yaml
 import re
 import webbrowser
 from  bisect import bisect_left
-from PySide6.QtCore import Signal, QSize, Qt
+from PySide6.QtCore import Signal, QSize, Qt, QThread
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import (
     QWidget,
@@ -651,6 +651,22 @@ class GenerateWidget(QWidget):
         ...
 
 
+class GenerateThread(QThread):
+    """Compute ridechecks in a thread to keep the app responsive."""
+    done_generating = Signal(tuple)
+
+    def __init__(self, days_info, rides_time, can_check):
+        super().__init__()
+        self.days_info = days_info
+        self.rides_time = rides_time
+        self.can_check = can_check
+
+    def run(self):
+        ridechecks, status = generate_multiple_day_assignments(
+            self.days_info, self.rides_time, self.can_check)
+        self.done_generating.emit(tuple((ridechecks, status)))
+
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -703,19 +719,21 @@ class MainWindow(QWidget):
     def yaml_dump(self, yaml_data):
         with open('state.yaml', 'w') as f:
             yaml.safe_dump(yaml_data, f, sort_keys=False)
-
+        
     def handle_generate_signal(self):
         yaml_data = self.read_yaml_data()
         self.yaml_dump(yaml_data) # Save before generating.
         
-        # FIXME QThread: keep the app responsive. Disable generate button and set status to generating.
-        # Also allow for cancelling the QThread after timeout and retrying.
-        ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
+        def handle_done_generating(result):
+            ridechecks, status = result
+            self.generate_widget.set_status(status)
+            if ridechecks:
+                make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
+                webbrowser.open('output.html')
         
-        self.generate_widget.set_status(status)
-        if ridechecks:
-            make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
-            webbrowser.open('output.html')
+        generate_thread = GenerateThread(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
+        generate_thread.done_generating.connect(handle_done_generating)
+        generate_thread.run()
     
     def closeEvent(self, event):
         yaml_data = self.read_yaml_data()

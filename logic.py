@@ -11,7 +11,7 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
 
     # SECTION - DFS
 
-    # FIXME - Takes a long time if a complete assignment is impossible.
+    # FIXME - Takes forever if a complete assignment is impossible.
 
     def dfs(partial_assignment: Dict[str, str], partial_worker_times_remaining: Dict[str, int]) -> Tuple[Dict[str, str], Dict[str, int]]:
         """
@@ -30,9 +30,10 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
             return partial_assignment, partial_worker_times_remaining
         
         # Recursive case:
-        ride = next(ride for ride in rides_time if ride not in partial_assignment)
+        ride = next(ride for ride in rides_time if ride not in partial_assignment) # NOTE - Is this why impossible cases take forever?
+        # print(ride)
         workers = list(workers_can_check.keys())
-        # random.shuffle(workers) # NOTE - May not be necessary! Hillclimb is already random. By removing this, DFS is more efficient.
+        # random.shuffle(workers) # NOTE - Unnecessary! Hillclimb is already random. By removing this, DFS is more efficient.
         for worker in workers: # Try to assign every worker to the ride.
             if ride in workers_can_check[worker] and rides_time[ride] <= partial_worker_times_remaining[worker]:
                 # Recursive call, adding ride and worker to partial_assignment, worker_times reflect remaining time.
