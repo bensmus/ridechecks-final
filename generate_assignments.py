@@ -11,14 +11,14 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
 
     solution = csp_solution(worker_time, rides_time, workers_can_check)
     if solution == None:
-        print(f"No assignment exists for worker_time={worker_time}, ride_times={rides_time}, can_check={workers_can_check}")
+        print(f"No assignment exists for worker_time={worker_time}, rides_time={rides_time}, can_check={workers_can_check}")
         return None
     
     complete_assignment = to_ride_assignment(solution)
 
     complete_worker_times_remaining = {worker: worker_time for worker in workers_can_check}
     for ride, worker in complete_assignment.items():
-        time = ride_times[ride]
+        time = rides_time[ride]
         complete_worker_times_remaining[worker] -= time
 
     # SECTION - HILLCLIMB
