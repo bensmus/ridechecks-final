@@ -1,61 +1,25 @@
 from typing import List, Dict, Tuple, Set, Literal, Any
-import time
 import random
-
+import yaml
+from csp import csp_solution, to_ride_assignment
 
 def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], workers_can_check: Dict[str, Set[str]]) -> Dict[str, str] | None:
     """
-    Find a complete assignment using dfs (backtracking), then improve the complete assignment using hillclimbing.
+    Find a complete assignment using python-constraints library MinConflictsSolver, then improve the complete assignment using hillclimbing.
     Returns a random locally optimal assignment {ride: worker...} and the remaining times of the workers {worker: time...}.
     """
 
-    # SECTION - DFS
-
-    # FIXME - Takes forever if a complete assignment is impossible.
-
-    def dfs(partial_assignment: Dict[str, str], partial_worker_times_remaining: Dict[str, int]) -> Tuple[Dict[str, str], Dict[str, int]]:
-        """
-        Recursive function.
-        partial_assignment: Dictionary of {ride: worker...} containing a subset of rides.
-        partial_worker_times_remaining: How much time does every worker have remaining (always contains all workers).
-        Randomized dfs: find a random solution to CSP that is not even locally optimal.
-        """
-
-        # NOTE - This function could be faster if workers were chosen from a list sorted based on time remaining. (Kind of A star-y?)
-        # Randomize the next ride instead. 
-        # Add a line to check if a complete assignment is possible: set of values of workers_can_check cardinality equal to rides_time length.
-
-        # Base case: 
-        if len(partial_assignment) == len(rides_time):
-            return partial_assignment, partial_worker_times_remaining
-        
-        # Recursive case:
-        ride = next(ride for ride in rides_time if ride not in partial_assignment) # NOTE - Is this why impossible cases take forever?
-        # print(ride)
-        workers = list(workers_can_check.keys())
-        # random.shuffle(workers) # NOTE - Unnecessary! Hillclimb is already random. By removing this, DFS is more efficient.
-        for worker in workers: # Try to assign every worker to the ride.
-            if ride in workers_can_check[worker] and rides_time[ride] <= partial_worker_times_remaining[worker]:
-                # Recursive call, adding ride and worker to partial_assignment, worker_times reflect remaining time.
-                complete_assignment, complete_worker_times_remaining = dfs(
-                    partial_assignment | {ride: worker}, 
-                    partial_worker_times_remaining | {worker: partial_worker_times_remaining[worker] - rides_time[ride]}
-                )
-                if complete_assignment != {}:
-                    return complete_assignment, complete_worker_times_remaining
-        # Could not find a complete assignment based on the partial_assignment and worker_times_remaining.
-        return {}, partial_worker_times_remaining
-
-    start_dfs_time = time.time()
-
-    complete_assignment, complete_worker_times_remaining = dfs({}, {worker: worker_time for worker in workers_can_check})
-    if complete_assignment == {}:
+    solution = csp_solution(worker_time, rides_time, workers_can_check)
+    if solution == None:
         print(f"No assignment exists for worker_time={worker_time}, ride_times={rides_time}, can_check={workers_can_check}")
         return None
     
-    end_dfs_time = time.time()
-    print('dfs time', end_dfs_time - start_dfs_time)
-    print(complete_assignment)
+    complete_assignment = to_ride_assignment(solution)
+
+    complete_worker_times_remaining = {worker: worker_time for worker in workers_can_check}
+    for ride, worker in complete_assignment.items():
+        time = ride_times[ride]
+        complete_worker_times_remaining[worker] -= time
 
     # SECTION - HILLCLIMB
 
@@ -108,14 +72,9 @@ def generate_day_assignment(worker_time: int, rides_time: Dict[str, int], worker
                 complete_worker_times_remaining[accepting_worker] -= rides_time[ride_transferred]
                 return True
         return False
-    
-    start_hillclimb_time = time.time()
 
     while hillclimb(complete_assignment, complete_worker_times_remaining): # Hillclimb until local optimum.
         pass
-    
-    end_hillclimb_time = time.time()
-    print('hillclimb time', end_hillclimb_time - start_hillclimb_time)
 
     return complete_assignment
 
@@ -183,27 +142,35 @@ def generate_multiple_day_assignments(
 
 
 if __name__ == '__main__':
-    week_info: Dict[Day, DayInfo] = {
-        'mon': {
-            'time': 20,
-            'workers_ua': [],
-            'rides_ua': []
-        },
-        'wed': {
-            'time': 20,
-            'workers_ua': [],
-            'rides_ua': []
-        }
-    }
-    all_ride_times = {
-        'wooden': 10,
-        'scary': 1,
-        'slow': 1,
-        'fast': 5
-    }
-    all_can_check = {
-        'john': {'wooden', 'fast'},
-        'bob': {'scary', 'slow'},
-    }
-    assignments, status = generate_multiple_day_assignments(week_info, all_ride_times, all_can_check)
+    # week_info: Dict[Day, DayInfo] = {
+    #     'mon': {
+    #         'time': 20,
+    #         'workers_ua': [],
+    #         'rides_ua': []
+    #     },
+    #     'wed': {
+    #         'time': 20,
+    #         'workers_ua': [],
+    #         'rides_ua': []
+    #     }
+    # }
+    # all_ride_times = {
+    #     'wooden': 10,
+    #     'scary': 1,
+    #     'slow': 1,
+    #     'fast': 5
+    # }
+    # all_can_check = {
+    #     'john': {'wooden', 'fast'},
+    #     'bob': {'scary', 'slow'},
+    # }
+
+    with open('realistic_state.yaml') as f:
+            yaml_data = yaml.safe_load(f)
+    
+    ride_times: Dict[str, int] = yaml_data['Ride Times']
+    worker_permissions: Dict[str, List[str]] = yaml_data['Worker Permissions']
+    week_info = yaml_data['Weekly Info']
+    
+    assignments, status = generate_multiple_day_assignments(week_info, ride_times, worker_permissions)
     print(assignments, status)

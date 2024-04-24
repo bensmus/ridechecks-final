@@ -3,7 +3,7 @@ import yaml
 import re
 import webbrowser
 from  bisect import bisect_left
-from PySide6.QtCore import Signal, QSize, Qt, QThread
+from PySide6.QtCore import Signal, QSize, Qt, QThread, QTimer
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import (
     QWidget,
@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QFrame,
 )
-from logic import generate_multiple_day_assignments
+from generate_assignments import generate_multiple_day_assignments
 from make_html_table import make_html_table
 
 app = QApplication([])
@@ -655,16 +655,29 @@ class GenerateThread(QThread):
     """Compute ridechecks in a thread to keep the app responsive."""
     done_generating = Signal(tuple)
 
-    def __init__(self, days_info, rides_time, can_check):
+    def __init__(self, read_yaml_data):
         super().__init__()
-        self.days_info = days_info
-        self.rides_time = rides_time
-        self.can_check = can_check
+        self.read_yaml_data = read_yaml_data
 
     def run(self):
-        ridechecks, status = generate_multiple_day_assignments(
-            self.days_info, self.rides_time, self.can_check)
-        self.done_generating.emit(tuple((ridechecks, status)))
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        timer.setInterval(1_000)
+        
+        class ThreadTimeout(Exception):
+            pass
+
+        def thread_timeout(): raise ThreadTimeout()
+
+        timer.timeout.connect(thread_timeout)
+
+        try:
+            timer.start()
+            yaml_data = self.read_yaml_data()
+            ridechecks, status = generate_multiple_day_assignments(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
+            self.done_generating.emit(tuple((ridechecks, status)))
+        except ThreadTimeout:
+            self.done_generating.emit(tuple(({}, "Timeout: Could not generate ridechecks")))
 
 
 class MainWindow(QWidget):
@@ -709,6 +722,7 @@ class MainWindow(QWidget):
         layout.addWidget(tab_widget)
 
         self.generate_widget.generate_signal.connect(self.handle_generate_signal)
+        self.generate_thread = GenerateThread(self.read_yaml_data)
 
     def read_yaml_data(self):
         weekly_info = self.weekly_info_widget.read_weekly_info()
@@ -725,15 +739,15 @@ class MainWindow(QWidget):
         self.yaml_dump(yaml_data) # Save before generating.
         
         def handle_done_generating(result):
+            print('called')
             ridechecks, status = result
             self.generate_widget.set_status(status)
             if ridechecks:
                 make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
                 webbrowser.open('output.html')
         
-        generate_thread = GenerateThread(yaml_data['Weekly Info'], yaml_data['Ride Times'], yaml_data['Worker Permissions'])
-        generate_thread.done_generating.connect(handle_done_generating)
-        generate_thread.run()
+        self.generate_thread.done_generating.connect(handle_done_generating)
+        self.generate_thread.start()
     
     def closeEvent(self, event):
         yaml_data = self.read_yaml_data()
