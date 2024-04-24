@@ -33,12 +33,10 @@ Worker Permissions:
   - Dizzy drop
   - Enterprise
   - Flutterbye
-  - Kettle creeck
   - Pirate
   Alec:
   - Dizzy drop
   - Flutterbye
-  - Kettle creeck
   - Pirate
   Alex:
   - Breakdance
@@ -46,7 +44,6 @@ Worker Permissions:
   - Coaster track
   - Dizzy drop
   - Enterprise
-  - Kettle creeck
   - Pirate
   - Wcw
   Alexa:
@@ -59,12 +56,12 @@ Worker Permissions:
   - Dizzy drop
   - Enterprise
   - Flume
-  - Kettle creeck
   - Pirate
   Clayton:
   - Flutterbye
   Colby:
   - Hellevator
+  - Kettle creek
   - Skybender
   Dan:
   - Atmosphere
@@ -78,7 +75,6 @@ Worker Permissions:
   - Coaster track
   - Dizzy drop
   - Flume
-  - Kettle creeck
   - Pirate
   Graeme:
   - Atmosphere
@@ -86,7 +82,6 @@ Worker Permissions:
   - Dizzy drop
   - Enterprise
   - Flutterbye
-  - Kettle creeck
   - Pirate
   - Skybender
   Harry:
@@ -95,7 +90,7 @@ Worker Permissions:
   - Dizzy drop
   - Enterprise
   - Flutterbye
-  - Kettle creeck
+  - Kettle creek
   - Skybender
   Jay:
   - Atmosphere
@@ -103,31 +98,29 @@ Worker Permissions:
   - Coaster brakes
   - Coaster track
   - Flume
+  - Kettle creek
   - Pirate
   Jerry:
   - Dizzy drop
   - Flutterbye
-  - Kettle creeck
+  - Kettle creek
   Joel:
   - Atmosphere
   - Coaster track
   - Enterprise
   - Flume
   - Flutterbye
-  - Kettle creeck
   - Pirate
   Kennedy:
   - Dizzy drop
   - Enterprise
   - Flutterbye
-  - Kettle creeck
   - Pirate
   Kevin:
   - Breakdance
   - Coaster brakes
   - Enterprise
   - Flutterbye
-  - Kettle creeck
   - Skybender
   - Wcw
   Steve: []
@@ -147,7 +140,7 @@ Ride Times:
   Flume: 120
   Flutterbye: 60
   Hellevator: 90
-  Kettle creeck: 60
+  Kettle creek: 60
   Pirate: 60
   Skybender: 180
   Wcw: 60

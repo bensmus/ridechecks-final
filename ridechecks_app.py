@@ -433,14 +433,17 @@ class CheckboxGridWidget(QWidget):
         self.tableWidget.setVerticalHeaderItem(row, item)
         column_count = self.tableWidget.columnCount()
         for column in range(column_count):
-            checkbox = QCheckBox()
-            checkbox_parent = QWidget()
-            checkbox_layout = QVBoxLayout()
-            checkbox_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            checkbox_parent.setLayout(checkbox_layout)
-            checkbox_layout.addWidget(checkbox)
-            self.tableWidget.setCellWidget(row, column, checkbox_parent)
-            checkbox_parent.mousePressEvent = lambda event, chk=checkbox: chk.setChecked(not chk.isChecked())
+            self._make_checkbox(row, column)
+    
+    def _make_checkbox(self, row, column):
+        checkbox = QCheckBox()
+        checkbox_parent = QWidget()
+        checkbox_layout = QVBoxLayout()
+        checkbox_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        checkbox_parent.setLayout(checkbox_layout)
+        checkbox_layout.addWidget(checkbox)
+        self.tableWidget.setCellWidget(row, column, checkbox_parent)
+        checkbox_parent.mousePressEvent = lambda event, chk=checkbox: chk.setChecked(not chk.isChecked())
 
     def set_checkbox(self, checked: bool, row: int, column: int):
         self._get_checkbox(row, column).setChecked(checked)
@@ -463,8 +466,7 @@ class CheckboxGridWidget(QWidget):
         self.tableWidget.setHorizontalHeaderItem(column, QTableWidgetItem(column_name))
         row_count = self.tableWidget.rowCount()
         for row in range(row_count):
-            checkbox = QCheckBox()
-            self.tableWidget.setCellWidget(row, column, checkbox)
+            self._make_checkbox(row, column)
     
     def read_row_names(self) -> List[str]:
         row_names = []
