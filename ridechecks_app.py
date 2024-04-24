@@ -398,7 +398,7 @@ class WeeklyInfoWidget(QWidget):
         return weekly_info
 
 
-# TODO: Any cell click should trigger checkbox, center checkbox.
+# TODO: Make the whole cell be sensitive to click, not just checkbox.
 class CheckboxGridWidget(QWidget):
     def __init__(self, rows: List[str], columns: List[str]):
         super().__init__()
@@ -424,7 +424,7 @@ class CheckboxGridWidget(QWidget):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
     
     def _get_checkbox(self, row: int, column: int) -> QWidget:
-        return self.tableWidget.cellWidget(row, column)
+        return self.tableWidget.cellWidget(row, column).findChild(QCheckBox)
     
     def _init_row(self, row: int, row_name: str):
         """Add vertical header and checkboxes"""
@@ -433,7 +433,12 @@ class CheckboxGridWidget(QWidget):
         column_count = self.tableWidget.columnCount()
         for column in range(column_count):
             checkbox = QCheckBox()
-            self.tableWidget.setCellWidget(row, column, checkbox)
+            checkbox_parent = QWidget()
+            checkbox_layout = QVBoxLayout()
+            checkbox_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            checkbox_parent.setLayout(checkbox_layout)
+            checkbox_layout.addWidget(checkbox)
+            self.tableWidget.setCellWidget(row, column, checkbox_parent)
 
     def set_checkbox(self, checked: bool, row: int, column: int):
             self._get_checkbox(row, column).setChecked(checked)

@@ -50,7 +50,8 @@ Worker Permissions:
   - Kettle creeck
   - Pirate
   - Wcw
-  Alexa: []
+  Alexa:
+  - Wcw
   Bill:
   - Atmosphere
   - Breakdance
@@ -70,7 +71,8 @@ Worker Permissions:
   - Flutterbye
   - Hellevator
   - Pirate
-  Derek: []
+  Derek:
+  - Kettle creeck
   Graeme:
   - Atmosphere
   - Breakdance
@@ -122,6 +124,7 @@ Worker Permissions:
   - Flutterbye
   - Kettle creeck
   - Skybender
+  - Wcw
   Steve: []
   Terry:
   - Dizzy drop
