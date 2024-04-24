@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QFrame,
 )
+
 from generate_assignments import generate_multiple_day_assignments
 from make_html_table import make_html_table
 
@@ -439,9 +440,10 @@ class CheckboxGridWidget(QWidget):
             checkbox_parent.setLayout(checkbox_layout)
             checkbox_layout.addWidget(checkbox)
             self.tableWidget.setCellWidget(row, column, checkbox_parent)
+            checkbox_parent.mousePressEvent = lambda event, chk=checkbox: chk.setChecked(not chk.isChecked())
 
     def set_checkbox(self, checked: bool, row: int, column: int):
-            self._get_checkbox(row, column).setChecked(checked)
+        self._get_checkbox(row, column).setChecked(checked)
     
     def read_checkbox(self, row: int, column: int):
         return self._get_checkbox(row, column).isChecked()

@@ -46,22 +46,26 @@ Worker Permissions:
   - Coaster track
   - Dizzy drop
   - Enterprise
-  - Flutterbye
   - Kettle creeck
   - Pirate
   - Wcw
   Alexa:
+  - Flutterbye
   - Wcw
   Bill:
   - Atmosphere
   - Breakdance
+  - Coaster track
   - Dizzy drop
   - Enterprise
   - Flume
   - Kettle creeck
   - Pirate
-  Clayton: []
-  Colby: []
+  Clayton:
+  - Flutterbye
+  Colby:
+  - Hellevator
+  - Skybender
   Dan:
   - Atmosphere
   - Breakdance
@@ -69,22 +73,25 @@ Worker Permissions:
   - Coaster track
   - Enterprise
   - Flutterbye
-  - Hellevator
   - Pirate
   Derek:
+  - Coaster track
+  - Dizzy drop
+  - Flume
   - Kettle creeck
+  - Pirate
   Graeme:
   - Atmosphere
   - Breakdance
-  - Coaster brakes
   - Dizzy drop
   - Enterprise
   - Flutterbye
-  - Hellevator
   - Kettle creeck
   - Pirate
+  - Skybender
   Harry:
   - Atmosphere
+  - Coaster brakes
   - Dizzy drop
   - Enterprise
   - Flutterbye
@@ -96,7 +103,6 @@ Worker Permissions:
   - Coaster brakes
   - Coaster track
   - Flume
-  - Hellevator
   - Pirate
   Jerry:
   - Dizzy drop
@@ -108,7 +114,6 @@ Worker Permissions:
   - Enterprise
   - Flume
   - Flutterbye
-  - Hellevator
   - Kettle creeck
   - Pirate
   Kennedy:
