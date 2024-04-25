@@ -1,4 +1,4 @@
-# What is this
+# What is this?
 
 This is an application made for an amusement park that allows them to assign mechanics (workers) to check amusement park rides before the amusement park opens. 
 There is a certain "time till opening" during which the workers have to check their assigned rides. 
