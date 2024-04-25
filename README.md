@@ -26,11 +26,18 @@ Run `python ridechecks_app.py` to launch the application.
 
 The GUI has four tabs: "Weekly Info", "Worker Permissions", "Rides", and "Generate".
 
+![image](https://github.com/bensmus/ridechecks-final/assets/37351071/f0f8f77c-8ecd-41e4-bc90-1caeb39da68e)
+
 ## Weekly Info
 
 *tab for editing problem state*
 
 Edit available time, worker availablity, and ride status for each day.
+
+In the image above, the UI is opened to the weekly info tab. Here's an explanation of the UI. Since the time till opening is 0 for Monday and Tuesday, this means that no ridechecks
+will be scheduled for those days. On each day fom Wednesday to Sunday, there are 4 hours till opening. 
+
+E.g. reading the boexes: On Wednesday, "Jay" and "Steve" are absent, and "Coaster track" is closed.
 
 ## Worker Permissions
 
