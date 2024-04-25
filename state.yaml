@@ -71,6 +71,7 @@ Worker Permissions:
   - Enterprise
   - Flutterbye
   - Pirate
+  - Roo
   Derek:
   - Coaster track
   - Dizzy drop
@@ -116,14 +117,17 @@ Worker Permissions:
   - Enterprise
   - Flutterbye
   - Pirate
+  - Roo
   Kevin:
   - Breakdance
   - Coaster brakes
   - Enterprise
   - Flutterbye
+  - Roo
   - Skybender
   - Wcw
-  Steve: []
+  Steve:
+  - Roo
   Terry:
   - Dizzy drop
   - Enterprise
@@ -142,5 +146,6 @@ Ride Times:
   Hellevator: 90
   Kettle creek: 60
   Pirate: 60
+  Roo: 60
   Skybender: 180
   Wcw: 60

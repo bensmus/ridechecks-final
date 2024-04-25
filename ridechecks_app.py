@@ -81,9 +81,9 @@ class LineEditSubmitWidget(QWidget):
         def handle_button_clicked():
             line_edit_widgets = self._get_line_edit_widgets()
             line_edit_dict = get_line_edit_dict(line_edit_widgets)
+            line_edit_dict = {k: format_case(v) for k, v in line_edit_dict.items()}
             if line_edits_validated(line_edit_dict):
-                line_edit_dict_formatted = {k: format_case(v) for k, v in line_edit_dict.items()}
-                self.submit.emit(line_edit_dict_formatted)
+                self.submit.emit(line_edit_dict)
                 for widget in line_edit_widgets:
                     widget.clear()
         
@@ -259,9 +259,9 @@ class DayWidget(QWidget):
         
         # Initialize widget with validation function: accept non-negative integers.
         time_set = LineEditSubmitWidget(
-            'Set check duration', 
-            ['Check duration'], 
-            lambda line_edits: bool(re.match('^\d+$', line_edits['Check duration']))
+            'Set time till opening', 
+            ['Time till opening'], 
+            lambda line_edits: bool(re.match('^\d+$', line_edits['Time till opening']))
         )
 
         time_frame = QFrame()
@@ -271,7 +271,7 @@ class DayWidget(QWidget):
         time_layout.addWidget(time_set)
 
         def handle_set_time(line_edit_dict):
-            time = line_edit_dict['Check duration']
+            time = line_edit_dict['Time till opening']
             self.time_display.write_value(time)
         
         time_set.submit.connect(handle_set_time)
