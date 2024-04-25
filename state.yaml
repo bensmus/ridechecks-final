@@ -9,24 +9,34 @@ Weekly Info:
     rides_ua: []
   Wed:
     time: 240
-    workers_ua: []
-    rides_ua: []
+    workers_ua:
+    - Jay
+    - Steve
+    rides_ua:
+    - Coaster track
   Thu:
     time: 240
     workers_ua: []
-    rides_ua: []
+    rides_ua:
+    - Roo
   Fri:
     time: 240
-    workers_ua: []
+    workers_ua:
+    - Harry
+    - Steve
     rides_ua: []
   Sat:
     time: 240
-    workers_ua: []
-    rides_ua: []
+    workers_ua:
+    - Kevin
+    rides_ua:
+    - Coaster track
+    - Pirate
   Sun:
     time: 240
     workers_ua: []
-    rides_ua: []
+    rides_ua:
+    - Pirate
 Worker Permissions:
   Alan:
   - Breakdance
