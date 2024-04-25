@@ -30,7 +30,7 @@ The GUI has four tabs: 'Weekly Info', 'Worker Permissions', 'Rides', and 'Genera
 
 ## Weekly Info
 
-*tab for editing problem state*
+*Tab for editing problem state*
 
 Edit available time, worker availablity, and ride status for each day.
 
