@@ -1,5 +1,6 @@
 from typing import List, Dict, Tuple, Callable
 import yaml
+import json
 import re
 import webbrowser
 from  bisect import bisect_left
@@ -725,6 +726,8 @@ class MainWindow(QWidget):
 
         self.generate_widget.set_status(status)
         if ridechecks:
+            print("Successful generation")
+            print(json.dumps(ridechecks, indent=4))
             make_html_table(ridechecks, yaml_data['Ride Times'], 'table.html', 'output.html')
             webbrowser.open('output.html')       
         

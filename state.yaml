@@ -8,61 +8,57 @@ Weekly Info:
     workers_ua: []
     rides_ua: []
   Wed:
-    time: 240
+    time: 300
     workers_ua:
     - Jay
     - Steve
     rides_ua:
-    - Coaster track
+    - Pirate
   Thu:
-    time: 240
+    time: 300
     workers_ua: []
     rides_ua:
-    - Roo
+    - Pirate
   Fri:
-    time: 240
+    time: 300
     workers_ua:
     - Harry
     - Steve
-    rides_ua: []
+    rides_ua:
+    - Pirate
   Sat:
-    time: 240
+    time: 300
     workers_ua:
     - Kevin
     rides_ua:
-    - Coaster track
     - Pirate
+    - Skybender
   Sun:
-    time: 240
+    time: 300
     workers_ua: []
-    rides_ua:
-    - Pirate
+    rides_ua: []
 Worker Permissions:
   Alan:
   - Breakdance
   - Dizzy drop
   - Enterprise
   - Flutterbye
-  - Pirate
   Alec:
   - Dizzy drop
   - Flutterbye
-  - Pirate
   Alex:
   - Breakdance
   - Coaster brakes
-  - Coaster track
   - Dizzy drop
   - Enterprise
-  - Pirate
   - Wcw
   Alexa:
+  - Coaster track
   - Flutterbye
   - Wcw
   Bill:
   - Atmosphere
   - Breakdance
-  - Coaster track
   - Dizzy drop
   - Enterprise
   - Flume
@@ -77,23 +73,18 @@ Worker Permissions:
   - Atmosphere
   - Breakdance
   - Coaster brakes
-  - Coaster track
   - Enterprise
   - Flutterbye
-  - Pirate
-  - Roo
   Derek:
-  - Coaster track
   - Dizzy drop
   - Flume
-  - Pirate
   Graeme:
   - Atmosphere
   - Breakdance
+  - Coaster track
   - Dizzy drop
   - Enterprise
   - Flutterbye
-  - Pirate
   - Skybender
   Harry:
   - Atmosphere
@@ -107,17 +98,14 @@ Worker Permissions:
   - Atmosphere
   - Breakdance
   - Coaster brakes
-  - Coaster track
   - Flume
   - Kettle creek
-  - Pirate
   Jerry:
   - Dizzy drop
   - Flutterbye
   - Kettle creek
   Joel:
   - Atmosphere
-  - Coaster track
   - Enterprise
   - Flume
   - Flutterbye
@@ -126,29 +114,24 @@ Worker Permissions:
   - Dizzy drop
   - Enterprise
   - Flutterbye
-  - Pirate
-  - Roo
   Kevin:
   - Breakdance
   - Coaster brakes
   - Enterprise
   - Flutterbye
-  - Roo
   - Skybender
   - Wcw
-  Steve:
-  - Roo
+  Steve: []
   Terry:
   - Dizzy drop
   - Enterprise
   - Flume
   - Flutterbye
-  - Pirate
 Ride Times:
   Atmosphere: 90
   Breakdance: 60
   Coaster brakes: 60
-  Coaster track: 180
+  Coaster track: 60
   Dizzy drop: 60
   Enterprise: 60
   Flume: 120
@@ -156,6 +139,5 @@ Ride Times:
   Hellevator: 90
   Kettle creek: 60
   Pirate: 60
-  Roo: 60
   Skybender: 180
   Wcw: 60

@@ -115,7 +115,7 @@ def generate_multiple_day_assignments(
         worker_time = day_info['time']
 
         if worker_time == 0: # Closed on that day
-            multiple_day_assignments[day] = {}
+            multiple_day_assignments[day] = {ride: 'P.C.' for ride in all_rides_time}
             continue
 
         # Not closed on that day
@@ -132,7 +132,7 @@ def generate_multiple_day_assignments(
         
         # Found assignment for that day
         if success:
-            multiple_day_assignments[day] = day_assignment
+            multiple_day_assignments[day] = {ride: 'R.C.' for ride in all_rides_time} | day_assignment
             status_string += day + ", "
     
     # Remove last trailing comma and space

@@ -14,7 +14,8 @@ def all_subsets(lst):
 def total_ride_times(rides: List[str], rides_time: Dict[str, int]):
     total = 0
     for ride in rides:
-        total += rides_time[ride]
+        if ride in rides_time:
+            total += rides_time[ride]
     return total
 
 
