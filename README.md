@@ -1,6 +1,6 @@
 # What is this?
 
-This application serves amusement park administrators, enabling them to generate ride check schedules. These schedules assign mechanics to inspect amusement park rides before opening hours. The application operates locally on the administrator's Python-enabled computer. Upon schedule generation, it opens in the default web browser, allowing administrators to download (ctrl-s) or print (ctrl-p) the schedule. Below, you'll find an illustrative sample of such a schedule.
+This application serves amusement park administrators, enabling them to generate ride check schedules. These schedules assign mechanics to inspect amusement park rides before opening hours. The application runs locally on the administrator's computer (which must have Python installed). Upon schedule generation, it opens in the default web browser, allowing administrators to download (ctrl-s) or print (ctrl-p) the schedule. Here's a sample schedule:
 
 <img width="1916" alt="ridechecks_blurred" src="https://github.com/bensmus/ridechecks-final/assets/37351071/7e44cd93-c044-40ff-8440-2c70b7fe5f91">
 
